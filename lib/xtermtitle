@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# usage: xtermtitle "tab title" "full title"
+xtermtitle()
+{
+    case $TERM in
+        xterm*)
+            printf '\033]2;%s\033\\' "$2"
+            ;;
+        screen*|tmux*)
+            printf '\033k%s\033\\' "$1"
+            printf '\033]2;%s\033\\' "$2"
+            ;;
+    esac
+}

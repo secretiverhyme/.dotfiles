@@ -1,0 +1,96 @@
+#!/bin/sh
+
+_shuffle_blocks()
+{
+    cat <<EOF |
+▀
+■
+▄
+EOF
+        awk -f ~/.dotfiles/libexec/shuffle -F"\n" -v RS=""
+}
+
+_shuffle_colours()
+{
+    cat <<EOF |
+104
+107
+110
+167
+183
+215
+EOF
+        awk -f ~/.dotfiles/libexec/shuffle -F"\n" -v RS="" |
+        awk '{ printf("%%{\033[38;5;%sm%%}\n", $0) }'
+}
+
+_blocks()
+{
+    ( _shuffle_colours | head -3 ; _shuffle_blocks ) |
+        pr -t -2 -s' ' |
+        tr -d '\n ';
+    printf "%%{\033[m%%}"
+}
+
+_magnet()
+{
+    ( _shuffle_colours | head -1 ; printf "%s" "░░▒▓" ) |
+        pr -t -2 -s' ' |
+        tr -d '\n ';
+    printf "%%{\033[m%%}"
+}
+
+_heart()
+{
+    printf "%%{\033[38;5;%sm%%}%s%%{\033[m%%}" \
+        162 \
+        "♥"
+}
+
+_location()
+{
+    printf "%s" "$PWD" |
+        sed "s,^$HOME,~," |
+        sed "s,\([^/]\)[^/]*/,\1/,g"
+}
+
+_clock()
+{
+    case `date +%-I:%M` in
+        *:00)
+            printf "%s" "DING!"
+            ;;
+        3:14)
+            printf "%s" "  π  "
+            ;;
+        4:20)
+            printf "%s" "nice."
+            ;;
+        *)
+            date +%-I:%M%p | tr A-Z a-z
+            ;;
+    esac
+}
+
+_promptchar()
+{
+    if [ "`id -u`" -eq 0 ]; then
+        printf "%s" "#"
+    else
+        printf "%s" "%"
+    fi
+}
+
+_peekaboo()
+{
+    if [ `~/.dotfiles/bin/d20` -eq "20" ]; then
+        printf "%s" "`_heart`"
+    else
+        printf "%s" "○"
+    fi
+}
+
+moo()
+{
+    printf "moo"
+}

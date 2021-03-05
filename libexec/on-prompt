@@ -1,0 +1,29 @@
+#!/bin/sh
+
+. ~/.dotfiles/lib/xtermtitle
+
+_number()
+{
+    if command -v number >/dev/null 2>/dev/null; then
+        number -l $1
+    else
+        printf "%s" "$1"
+    fi
+}
+
+# $1: cookie
+# $2: exit code
+on_prompt()
+{
+    if [ "$2" -ne "0" ]; then
+        printf "mew! exit %s\n" "`_number $2`"
+    fi
+
+    xtermtitle \
+        "`~/.dotfiles/libexec/title tab`" \
+        "`~/.dotfiles/libexec/title full`"
+
+    printf "\n"
+}
+
+on_prompt "$@"

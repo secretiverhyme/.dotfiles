@@ -1,0 +1,39 @@
+#!/bin/sh
+
+. ~/.dotfiles/lib/decorations
+
+left()
+{
+    printf "%s" " `_magnet` "
+}
+
+right()
+{
+    printf "%s" "`_location` `_peekaboo` `_clock` `_blocks` "
+}
+
+main()
+{
+    case "$1" in
+        left)
+            prompt_func=left
+            ;;
+        right)
+            prompt_func=right
+            ;;
+        ""*)
+            prompt_func=moo
+            ;;
+    esac
+
+    case "$2" in
+        tcsh)
+            $prompt_func | sed 's/!/\\!/g'
+            ;;
+        ""*)
+            $prompt_func
+            ;;
+    esac
+}
+
+main "$@"

@@ -1,0 +1,53 @@
+#!/bin/sh
+
+# use `history` instead of !#:q to work around a tcsh bug
+# https://mailman.astron.com/pipermail/tcsh/2021-January/000096.html
+_hook_tcsh()
+{
+    cat <<EOF
+alias precmd '
+    ~/.dotfiles/libexec/on-prompt \$$\$0 \$?;
+    set prompt = "\`~/.dotfiles/libexec/prompt left tcsh\`";
+    set rprompt = "\`~/.dotfiles/libexec/prompt right tcsh\`";
+';
+alias postcmd '
+    ~/.dotfiles/libexec/on-command \$$\$0 "\`history -h 1\`";
+';
+EOF
+}
+
+_hook_zsh()
+{
+    cat <<EOF
+function precmd()
+{
+    ~/.dotfiles/libexec/on-prompt \$$\$0 \$?;
+    PROMPT="\`~/.dotfiles/libexec/prompt left\`";
+    RPROMPT="\`~/.dotfiles/libexec/prompt right\`";
+}
+function preexec()
+{
+    ~/.dotfiles/libexec/on-command \$$\$0 "\$2"
+}
+EOF
+}
+
+main()
+{
+    case "$1" in
+        tcsh)
+            _hook_tcsh
+            return
+            ;;
+        zsh)
+            _hook_zsh
+            return
+            ;;
+        ""*)
+            false
+            return
+            ;;
+    esac
+}
+
+main "$@"

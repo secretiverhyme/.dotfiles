@@ -1,0 +1,20 @@
+#!/usr/bin/awk -f
+
+BEGIN { srand() }
+
+{
+    count = split($0, symbols, FS)
+
+    # fisher-yates shuffle
+    for (i = count; i >= 2; i--) {
+        j = int(1 + rand() * i)
+
+        tmp = symbols[i];
+        symbols[i] = symbols[j];
+        symbols[j] = tmp;
+    }
+
+    for (i = 1; i <= count; i++) {
+        printf (symbols[i] FS)
+    }
+}

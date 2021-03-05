@@ -1,0 +1,9 @@
+[init]
+    defaultBranch = trunk
+[pull]
+    ff = only
+[include]
+    path = ~/.gitconfig.local
+[pager]
+    branch = false
+    grep = false

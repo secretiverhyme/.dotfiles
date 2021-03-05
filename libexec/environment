@@ -1,0 +1,55 @@
+#!/bin/sh
+
+_environment()
+{
+    cat <<EOF
+MM_CHARSET=UTF-8
+LANG=en_US.UTF-8
+
+PATH=$PATH:$HOME/.dotfiles/bin
+
+EDITOR=vim
+PAGER=less
+
+LESS=R
+EOF
+}
+
+_blacklist()
+{
+    cat <<EOF
+TERMCAP
+EOF
+}
+
+_sh_env()
+{
+    _blacklist | awk 'NF { print "unset " $1 ";" }'
+    _environment | awk -F= 'NF { print $1 "=\"" $2 "\"; export " $1 ";" }'
+}
+
+_csh_env()
+{
+    _blacklist | awk 'NF { print "unsetenv " $1 ";" }'
+    _environment | awk -F= 'NF { print "setenv " $1 " \"" $2 "\";" }'
+}
+
+main()
+{
+    case "$1" in
+        sh)
+            _sh_env
+            return
+            ;;
+        csh)
+            _csh_env
+            return
+            ;;
+        ""*)
+            false
+            return
+            ;;
+    esac
+}
+
+main "$@"

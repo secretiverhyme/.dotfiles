@@ -1,0 +1,39 @@
+#!/bin/sh
+
+. ~/.dotfiles/lib/decorations
+
+tab()
+{
+    if [ -n "$1" ]; then
+        printf "%s" "${1%% *}"
+    else
+        printf "%s" "`uname -n``_promptchar`"
+    fi
+}
+
+full()
+{
+    printf "%s" "`_location``_promptchar`"
+    if [ -n "$1" ]; then
+        printf " %s" "$1"
+    fi
+}
+
+main()
+{
+    case "$1" in
+        tab)
+            prompt_func=tab
+            ;;
+        full)
+            prompt_func=full
+            ;;
+        ""*)
+            prompt_func=moo
+            ;;
+    esac
+
+    $prompt_func "$2"
+}
+
+main "$@"

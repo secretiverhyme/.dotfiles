@@ -1,0 +1,32 @@
+#!/bin/sh
+
+colours()
+{
+    if ! command -v tput >/dev/null 2>&1; then
+        printf "%s" "-1"
+        return
+    fi
+
+    # check old-style termcap (two-character) capability first
+    if tput Co >/dev/null 2>&1; then
+        # our caller redirects stdout; we leave stderr alone
+        # since tput needs a way to get to the caller's tty
+        tput Co
+        return
+    fi
+
+    # check terminfo capability, but beware the false positive
+    # a termcap-only tput will parse `colors` as `co`lumns
+    if tput colors >/dev/null 2>&1; then
+        if tput cols >/dev/null 2>&1 &&
+           [ "`tput colors`" -eq "`tput cols`" ]; then
+            printf "%s" "-1"
+            return
+        fi
+
+        tput colors
+        return
+    fi
+
+    printf "%s" "-1"
+}

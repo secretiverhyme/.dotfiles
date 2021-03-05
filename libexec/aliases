@@ -1,0 +1,42 @@
+#!/bin/sh
+
+_aliases()
+{
+    cat <<EOF
+h=history
+j=jobs
+
+la=ls -aF
+ll=ls -laF
+EOF
+}
+
+_sh_aliases()
+{
+    _aliases | awk -F= 'NF { print "alias " $1 "=\"" $2 "\";" }'
+}
+
+_csh_aliases()
+{
+    _aliases | awk -F= 'NF { print "alias " $1 " \"" $2 "\";" }'
+}
+
+main()
+{
+    case "$1" in
+        sh)
+            _sh_aliases
+            return
+            ;;
+        csh)
+            _csh_aliases
+            return
+            ;;
+        ""*)
+            false
+            return
+            ;;
+    esac
+}
+
+main "$@"

@@ -1,0 +1,28 @@
+#!/bin/sh
+
+looks_like_a_screen()
+{
+    case $TERM in
+        screen*|tmux*) true ;;
+        *) false ;;
+    esac
+}
+
+quacks_like_a_screen()
+{
+    if [ -n "$STY" ] || [ -n "$TMUX" ]; then
+        true
+    else
+        false
+    fi
+}
+
+screened_elsewhere()
+{
+    if looks_like_a_screen && ! quacks_like_a_screen; then
+        # We're running in a screen, but probably not on this host.
+        true
+    else
+        false
+    fi
+}

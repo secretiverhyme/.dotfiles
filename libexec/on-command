@@ -1,0 +1,14 @@
+#!/bin/sh
+
+. ~/.dotfiles/lib/xtermtitle
+
+# $1: cookie
+# $2: command
+on_command()
+{
+    xtermtitle \
+        "`~/.dotfiles/libexec/title tab \"$2\"`" \
+        "`~/.dotfiles/libexec/title full \"$2\"`"
+}
+
+on_command "$@"

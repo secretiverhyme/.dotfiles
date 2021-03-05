@@ -1,0 +1,105 @@
+#!/bin/sh
+
+random_salutation()
+{
+    cat <<EOF |
+yo
+'sup
+hello.
+kupo!
+EOF
+        sort -R |
+        head -1 |
+        tr -d '\n'
+}
+
+figlet_filter()
+{
+    if command -v figlet >/dev/null 2>&1; then
+        figlet -t -f mini
+    fi
+}
+
+cowsay_filter()
+{
+    if command -v cowsay >/dev/null 2>&1; then
+        cowsay -n
+    else
+        cat
+    fi
+}
+
+cowthink_filter()
+{
+    if command -v cowthink >/dev/null 2>&1; then
+        cowthink -n
+    else
+        cat
+    fi
+}
+
+moo_filter()
+{
+    if [ "`~/.dotfiles/bin/d6`" -gt 3 ]; then
+        cowsay_filter
+    else
+        cowthink_filter
+    fi
+}
+
+# WTB wcswidth(3)
+width()
+{
+    awk '{ print length }' |
+        sort -nr |
+        head -1
+}
+
+height()
+{
+    grep -c '^'
+}
+
+say_hello()
+{
+    random_salutation |
+        figlet_filter
+}
+
+main()
+{
+    if ! command -v tput >/dev/null 2>&1 ||
+       ! tput lines >/dev/null 2>&1 ||
+       ! tput cols >/dev/null 2>&1; then
+           false
+           return
+    fi
+
+    tty_height=`tput lines`
+    tty_width=`tput cols`
+
+    msg=`say_hello`
+    msg_height=`printf "%s" "$msg" | height`
+    msg_width=`printf "%s" "$msg" | width`
+
+    right_margin=2
+    lower_margin=2
+
+    top_inset=$((tty_height - lower_margin - msg_height))
+    left_inset=$((tty_width - right_margin - msg_width))
+
+    tput clear
+
+    if [ "$top_inset" -gt 0 ]; then
+        yes '' | sed ${top_inset}q
+    fi
+
+    if [ "$left_inset" -gt 0 ]; then
+        spacer=`printf "%${left_inset}s" " "`
+        printf "%s\n" "$msg" | sed "s/^/$spacer/g"
+    else
+        printf "%s\n" "$msg"
+    fi
+}
+
+main
